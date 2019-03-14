@@ -1,5 +1,8 @@
 // import { extendModule } from '@vue-storefront/core/lib/module'
 import { VueStorefrontModule } from '@vue-storefront/core/lib/module'
+import { ApiVueStorefront } from './api-vue-storefront';
+//import { ApiVueStorefrontExtended } from './api-vue-storefront-extended';
+//import { ApiOtherBackend } from './api-other-backend';
 import { Catalog } from "@vue-storefront/core/modules/catalog"
 import { Cart } from '@vue-storefront/core/modules/cart'
 import { Checkout } from '@vue-storefront/core/modules/checkout'
@@ -52,6 +55,9 @@ import { InstantCheckout } from './instant-checkout'
  * - Wishlist
  */
 export const registerModules: VueStorefrontModule[] = [
+  ApiVueStorefront,
+//ApiVueStorefrontExtended,
+//ApiOtherBackend,
   Checkout,
   Catalog,
   Cart,

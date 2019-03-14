@@ -7,6 +7,7 @@ import * as localForage from 'localforage'
 import UniversalStorage from '@vue-storefront/core/store/lib/storage'
 import { currentStoreView } from '../multistore'
 import { isServer } from '@vue-storefront/core/helpers'
+import Task from "core/lib/sync/types/Task";
 
 /** Syncs given task. If user is offline requiest will be sent to the server after restored connection */
 function queue (task) {
@@ -26,7 +27,7 @@ function queue (task) {
 }
 
 /** Runs given task. If user is offline request will fail */
-function execute (task) { // not offline task
+function execute(task) : Promise<Task>{ // not offline task
   const storeView = currentStoreView()
   const dbNamePrefix = storeView.storeCode ? storeView.storeCode + '-' : ''
   task = _prepareTask(task)

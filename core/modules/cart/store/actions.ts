@@ -58,23 +58,24 @@ const actions: ActionTree<CartState, RootState> = {
   save (context) {
     context.commit(types.CART_SAVE)
   },
-  serverPull (context, { forceClientState = false, dryRun = false }) { // pull current cart FROM the server
+  serverPull(context, {forceClientState = false, dryRun = false}) { // pull current cart FROM the server
     if (config.cart.synchronize && !isServer) {
-      const newItemsHash = sha3_224(JSON.stringify({ items: context.state.cartItems, token: context.state.cartServerToken }))
+      const newItemsHash = sha3_224(JSON.stringify({
+        items: context.state.cartItems,
+        token: context.state.cartServerToken
+      }))
       if ((Date.now() - context.state.cartServerPullAt) >= CART_PULL_INTERVAL_MS || (newItemsHash !== context.state.cartItemsHash)) {
         context.state.cartServerPullAt = Date.now()
         context.state.cartItemsHash = newItemsHash
-        return TaskQueue.execute({ url: config.cart.pull_endpoint, // sync the cart
-          payload: {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-            mode: 'cors'
+        return context.dispatch(
+          "apiFetchCartProducts",
+          {
+            forceClientState,
+            dryRun,
+            callbackEvent: 'store:cart/servercartAfterPulled'
           },
-          silent: true,
-          force_client_state: forceClientState,
-          dry_run: dryRun,
-          callback_event: 'store:cart/servercartAfterPulled'
-        }).then(task => {
+          { root: true }
+        ).then(task => {
           const storeView = currentStoreView()
           if ((Date.now() - context.state.cartServerMethodsRefreshAt) >= CART_METHODS_INTERVAL_MS) {
             context.state.cartServerMethodsRefreshAt = Date.now()

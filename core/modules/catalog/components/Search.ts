@@ -7,7 +7,7 @@ import { Logger } from '@vue-storefront/core/lib/logger'
 
 export const Search = {
   name: 'SearchPanel',
-  data () {
+  data() {
     return {
       products: [],
       search: '',
@@ -19,50 +19,66 @@ export const Search = {
     }
   },
   methods: {
-    onEscapePress () {
+    onEscapePress() {
       this.closeSearchpanel()
     },
-    closeSearchpanel () {
+    closeSearchpanel() {
       this.$store.commit('ui/setSidebar', false)
       this.$store.commit('ui/setMicrocart', false)
       this.$store.commit('ui/setSearchpanel', false)
     },
-    buildSearchQuery (queryText) {
+    buildSearchQuery(queryText) {
       let searchQuery = prepareQuickSearchQuery(queryText)
       return searchQuery
     },
-    makeSearch () {
+    makeSearch() {
       if (this.search !== '' && this.search !== undefined) {
         let query = this.buildSearchQuery(this.search)
         this.start = 0
         this.readMore = true
-        this.$store.dispatch('product/list', { query, start: this.start, size: this.size, updateState: false }).then(resp => {
-          this.products = resp.items
-          this.start = this.start + this.size
-          this.emptyResults = resp.items.length < 1
-        }).catch((err) => {
-          Logger.error(err, 'components-search')()
-        })
+        this.$store
+          .dispatch('product/list', {
+            query,
+            start: this.start,
+            size: this.size,
+            updateState: false
+          })
+          .then(resp => {
+            this.products = resp.items
+            this.start = this.start + this.size
+            this.emptyResults = resp.items.length < 1
+          })
+          .catch(err => {
+            Logger.error(err, 'components-search')()
+          })
       } else {
         this.products = []
         this.emptyResults = 0
       }
     },
-    seeMore () {
+    seeMore() {
       if (this.search !== '' && this.search !== undefined) {
         let query = this.buildSearchQuery(this.search)
-        this.$store.dispatch('product/list', { query, start: this.start, size: this.size, updateState: false }).then((resp) => {
-          let page = Math.floor(resp.total / this.size)
-          let exceeed = resp.total - this.size * page
-          if (resp.start === resp.total - exceeed) {
-            this.readMore = false
-          }
-          this.products = this.products.concat(resp.items)
-          this.start = this.start + this.size
-          this.emptyResults = this.products.length < 1
-        }).catch((err) => {
-          Logger.error(err, 'components-search')()
-        })
+        this.$store
+          .dispatch('product/list', {
+            query,
+            start: this.start,
+            size: this.size,
+            updateState: false
+          })
+          .then(resp => {
+            let page = Math.floor(resp.total / this.size)
+            let exceeed = resp.total - this.size * page
+            if (resp.start === resp.total - exceeed) {
+              this.readMore = false
+            }
+            this.products = this.products.concat(resp.items)
+            this.start = this.start + this.size
+            this.emptyResults = this.products.length < 1
+          })
+          .catch(err => {
+            Logger.error(err, 'components-search')()
+          })
       } else {
         this.products = []
         this.emptyResults = 0
@@ -70,7 +86,7 @@ export const Search = {
     }
   },
   computed: {
-    items () {
+    items() {
       return this.$store.state.search
     },
     ...mapState({

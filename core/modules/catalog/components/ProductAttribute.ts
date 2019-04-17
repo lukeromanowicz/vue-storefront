@@ -15,18 +15,26 @@ export const ProductAttribute = {
     }
   },
   computed: {
-    label () {
-      return (this.attribute && this.attribute.default_frontend_label) ? this.attribute.default_frontend_label : ''
+    label() {
+      return this.attribute && this.attribute.default_frontend_label
+        ? this.attribute.default_frontend_label
+        : ''
     },
-    value () {
+    value() {
       let parsedValues = this.product[this.attribute.attribute_code]
 
       if (!parsedValues) {
         return this.emptyPlaceholder
-      } else if (this.attribute.frontend_input !== 'multiselect' && this.attribute.frontend_input !== 'select') {
-          return parsedValues.toString()
+      } else if (
+        this.attribute.frontend_input !== 'multiselect' &&
+        this.attribute.frontend_input !== 'select'
+      ) {
+        return parsedValues.toString()
       } else {
-        parsedValues = typeof parsedValues === 'string' ? parsedValues.split(',') : parsedValues
+        parsedValues =
+          typeof parsedValues === 'string'
+            ? parsedValues.split(',')
+            : parsedValues
 
         if (!Array.isArray(parsedValues)) {
           parsedValues = [parsedValues]

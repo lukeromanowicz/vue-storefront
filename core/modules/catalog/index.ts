@@ -9,12 +9,14 @@ import { beforeRegistration } from './hooks/beforeRegistration'
 export const KEY = 'catalog'
 export const Catalog = createModule({
   key: KEY,
-  store: { modules: [
-    { key: 'product', module: productModule },
-    { key: 'attribute', module: attributeModule },
-    { key: 'stock', module: stockModule },
-    { key: 'tax', module: taxModule },
-    { key: 'category', module: categoryModule }
-  ] },
+  store: {
+    modules: [
+      { key: 'product', module: productModule },
+      { key: 'attribute', module: attributeModule },
+      { key: 'stock', module: stockModule },
+      { key: 'tax', module: taxModule },
+      { key: 'category', module: categoryModule }
+    ]
+  },
   beforeRegistration
 })

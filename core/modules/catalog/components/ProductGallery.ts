@@ -23,6 +23,5 @@ export const ProductGallery = {
       required: true
     }
   },
-  computed: {
-  }
+  computed: {}
 }

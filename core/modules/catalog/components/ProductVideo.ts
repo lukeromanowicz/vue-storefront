@@ -19,27 +19,27 @@ export const ProductVideo = {
       default: 0
     }
   },
-  data () {
+  data() {
     return {
       videoStarted: false,
       iframeLoaded: false
     }
   },
   methods: {
-    initVideo () {
+    initVideo() {
       this.videoStarted = true
       this.$emit('video-started', this.index)
     },
-    iframeIsLoaded () {
+    iframeIsLoaded() {
       this.iframeLoaded = true
     }
   },
   computed: {
-    embedUrl () {
+    embedUrl() {
       switch (this.type) {
-        case "youtube":
+        case 'youtube':
           return `https://www.youtube.com/embed/${this.id}?autoplay=1`
-        case "vimeo":
+        case 'vimeo':
           return `https://player.vimeo.com/video/${this.id}?autoplay=1`
         default:
           return

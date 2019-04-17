@@ -18,7 +18,7 @@ function isSpecialPriceActive(fromDate, toDate) {
   }
 }
 
-export function updateProductPrices (product, rate, sourcePriceInclTax = false) {
+export function updateProductPrices(product, rate, sourcePriceInclTax = false) {
   const rateFactor = parseFloat(rate.rate) / 100
   product.price = parseFloat(product.price)
   product.special_price = parseFloat(product.special_price)
@@ -41,8 +41,10 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
   product.specialPriceTax = specialPriceExclTax * rateFactor
   product.specialPriceInclTax = specialPriceExclTax + product.specialPriceTax
 
-  if (product.special_price && (product.special_price < product.price)) {
-    if (!isSpecialPriceActive(product.special_from_date, product.special_to_date)) {
+  if (product.special_price && product.special_price < product.price) {
+    if (
+      !isSpecialPriceActive(product.special_from_date, product.special_to_date)
+    ) {
       product.special_price = 0 // out of the dates period
     } else {
       product.originalPrice = priceExclTax
@@ -65,7 +67,9 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
         }
       }
       configurableChild.price = parseFloat(configurableChild.price)
-      configurableChild.special_price = parseFloat(configurableChild.special_price)
+      configurableChild.special_price = parseFloat(
+        configurableChild.special_price
+      )
 
       let priceExclTax = configurableChild.price
       if (sourcePriceInclTax) {
@@ -84,14 +88,24 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
       }
 
       configurableChild.specialPriceTax = specialPriceExclTax * rateFactor
-      configurableChild.specialPriceInclTax = specialPriceExclTax + configurableChild.specialPriceTax
+      configurableChild.specialPriceInclTax =
+        specialPriceExclTax + configurableChild.specialPriceTax
 
-      if (configurableChild.special_price && (configurableChild.special_price < configurableChild.price)) {
-        if (!isSpecialPriceActive(configurableChild.special_from_date, configurableChild.special_to_date)) {
+      if (
+        configurableChild.special_price &&
+        configurableChild.special_price < configurableChild.price
+      ) {
+        if (
+          !isSpecialPriceActive(
+            configurableChild.special_from_date,
+            configurableChild.special_to_date
+          )
+        ) {
           configurableChild.special_price = 0 // out of the dates period
         } else {
           configurableChild.originalPrice = priceExclTax
-          configurableChild.originalPriceInclTax = configurableChild.priceInclTax
+          configurableChild.originalPriceInclTax =
+            configurableChild.priceInclTax
           configurableChild.originalPriceTax = configurableChild.priceTax
 
           configurableChild.price = specialPriceExclTax
@@ -102,7 +116,11 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
         configurableChild.special_price = 0
       }
 
-      if (configurableChild.priceInclTax < product.priceInclTax || product.price === 0) { // always show the lowest price
+      if (
+        configurableChild.priceInclTax < product.priceInclTax ||
+        product.price === 0
+      ) {
+        // always show the lowest price
         product.priceInclTax = configurableChild.priceInclTax
         product.priceTax = configurableChild.priceTax
         product.price = configurableChild.price
@@ -117,28 +135,63 @@ export function updateProductPrices (product, rate, sourcePriceInclTax = false) 
   }
 }
 
-export function calculateProductTax (product, taxClasses, taxCountry = 'PL', taxRegion = '', sourcePriceInclTax = false) {
+export function calculateProductTax(
+  product,
+  taxClasses,
+  taxCountry = 'PL',
+  taxRegion = '',
+  sourcePriceInclTax = false
+) {
   let rateFound = false
   if (product.tax_class_id > 0) {
-    let taxClass = taxClasses.find((el) => el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0))
+    let taxClass = taxClasses.find(el =>
+      el.product_tax_class_ids.indexOf(parseInt(product.tax_class_id) >= 0)
+    )
     if (taxClass) {
-      for (let rate of taxClass.rates) { // TODO: add check for zip code ranges (!)
-        if (rate.tax_country_id === taxCountry && (rate.region_name === taxRegion || rate.tax_region_id === 0 || !rate.region_name)) {
+      for (let rate of taxClass.rates) {
+        // TODO: add check for zip code ranges (!)
+        if (
+          rate.tax_country_id === taxCountry &&
+          (rate.region_name === taxRegion ||
+            rate.tax_region_id === 0 ||
+            !rate.region_name)
+        ) {
           updateProductPrices(product, rate, sourcePriceInclTax)
           rateFound = true
-          Logger.debug('Tax rate ' + rate.code + ' = ' + rate.rate + '% found for ' + taxCountry + ' / ' + taxRegion, 'helper-tax')()
+          Logger.debug(
+            'Tax rate ' +
+              rate.code +
+              ' = ' +
+              rate.rate +
+              '% found for ' +
+              taxCountry +
+              ' / ' +
+              taxRegion,
+            'helper-tax'
+          )()
           break
         }
       }
     } else {
-      Logger.debug('No such tax class id: ' + product.tax_class_id, 'helper-tax')()
+      Logger.debug(
+        'No such tax class id: ' + product.tax_class_id,
+        'helper-tax'
+      )()
     }
-  } else  {
+  } else {
     Logger.debug('No  tax class set for: ' + product.sku, 'helper-tax')()
   }
   if (!rateFound) {
-    Logger.log('No such tax class id: ' + product.tax_class_id + ' or rate not found for ' + taxCountry + ' / ' + taxRegion, 'helper-tax')()
-    updateProductPrices(product, {rate: 0})
+    Logger.log(
+      'No such tax class id: ' +
+        product.tax_class_id +
+        ' or rate not found for ' +
+        taxCountry +
+        ' / ' +
+        taxRegion,
+      'helper-tax'
+    )()
+    updateProductPrices(product, { rate: 0 })
 
     product.priceInclTax = product.price
     product.priceTax = 0

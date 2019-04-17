@@ -11,7 +11,7 @@ const mutations: MutationTree<AttributeState> = {
    * @param {} state
    * @param {Array} attributes
    */
-  [types.ATTRIBUTE_UPD_ATTRIBUTES] (state, attributes) {
+  [types.ATTRIBUTE_UPD_ATTRIBUTES](state, attributes) {
     let attrList = attributes.items // extract fields from ES _source
     let attrHashByCode = state.list_by_code
     let attrHashById = state.list_by_id
@@ -22,12 +22,22 @@ const mutations: MutationTree<AttributeState> = {
 
       const attrCollection = Vue.prototype.$db.attributesCollection
       try {
-        attrCollection.setItem(entityKeyName('attribute_code', attr.attribute_code.toLowerCase()), attr).catch((reason) => {
-          Logger.error(reason, 'mutations') // it doesn't work on SSR
-        }) // populate cache by slug
-        attrCollection.setItem(entityKeyName('attribute_id', attr.attribute_id.toString()), attr).catch((reason) => {
-          Logger.error(reason, 'mutations') // it doesn't work on SSR
-        }) // populate cache by id
+        attrCollection
+          .setItem(
+            entityKeyName('attribute_code', attr.attribute_code.toLowerCase()),
+            attr
+          )
+          .catch(reason => {
+            Logger.error(reason, 'mutations') // it doesn't work on SSR
+          }) // populate cache by slug
+        attrCollection
+          .setItem(
+            entityKeyName('attribute_id', attr.attribute_id.toString()),
+            attr
+          )
+          .catch(reason => {
+            Logger.error(reason, 'mutations') // it doesn't work on SSR
+          }) // populate cache by id
       } catch (e) {
         Logger.error(e, 'mutations')()
       }

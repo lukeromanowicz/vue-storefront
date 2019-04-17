@@ -42,7 +42,8 @@
     "test:e2e": "cypress open",
     "test:e2e:ci": "cypress run",
     "lint": "eslint --ext .js,.vue core src",
-    "lerna": "lerna"
+    "lerna": "lerna",
+    "format": "prettier --write 'core/modules/catalog/**/*.{js,vue,ts,json}'"
   },
   "dependencies": {
     "@types/webpack": "^4.4.23",

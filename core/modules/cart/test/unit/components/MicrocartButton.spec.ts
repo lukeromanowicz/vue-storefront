@@ -2,9 +2,35 @@ import { mountMixinWithStore } from '@vue-storefront/unit-tests/utils';
 
 import { MicrocartButton } from '../../../components/MicrocartButton'
 
+const eventMap = {};
+
+document.addEventListener = jest.fn((event, cb) => {
+  eventMap[event] = cb;
+});
+
 describe('MicrocartButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    Object.keys(eventMap).forEach((key) => { delete eventMap[key]; });
+  });
+
+  it('runs cart/load action whenever the state of component goes from hidden to visible', () => {
+    const storeMock = {
+      modules: {
+        cart: {
+          actions: {
+            load: jest.fn()
+          },
+          namespaced: true
+        }
+      }
+    };
+
+    mountMixinWithStore(MicrocartButton, storeMock);
+
+    expect(eventMap).toHaveProperty('visibilitychange');
+    eventMap['visibilitychange']()
+    expect(storeMock.modules.cart.actions.load).toBeCalled();
   });
 
   it('quantity returns total quantity of products in cart', () => {

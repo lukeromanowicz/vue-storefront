@@ -125,6 +125,77 @@ describe('Cart mutations', () => {
     })
   })
 
+  describe('CART_SET_ITEMS_HASH', () => {
+    it('sets given cart hash', () => {
+      const stateMock = {
+        cartItemsHash: 'foo'
+      }
+      const expectedState = {
+        cartItemsHash: 'bar'
+      }
+      const wrapper = (mutations: any) => mutations[types.CART_SET_ITEMS_HASH](
+        stateMock,
+        expectedState.cartItemsHash
+      )
+
+      wrapper(cartMutations)
+
+      expect(stateMock).toEqual(expectedState)
+    })
+
+    it('sets cart hash to null if none was given', () => {
+      const stateMock = {
+        cartItemsHash: 'foo'
+      }
+      const expectedState = {
+        cartItemsHash: null
+      }
+      const wrapper = (mutations: any) => mutations[types.CART_SET_ITEMS_HASH](
+        stateMock
+      )
+
+      wrapper(cartMutations)
+
+      expect(stateMock).toEqual(expectedState)
+    })
+  })
+
+  it('CART_SET_SYNC sets given hash', () => {
+    const stateMock = {
+      cartServerLastSyncDate: 0
+    }
+    const expectedState = {
+      cartServerLastSyncDate: 12345678901
+    }
+    const wrapper = (mutations: any) => mutations[types.CART_SET_SYNC](
+      stateMock
+    )
+
+    Date.now = jest.fn(() => expectedState.cartServerLastSyncDate);
+
+    wrapper(cartMutations)
+
+    expect(stateMock).toEqual(expectedState)
+  })
+
+  it('CART_SET_TOTALS_SYNC sets given hash', () => {
+    const stateMock = {
+      cartServerLastTotalsSyncDate: 0
+    }
+    const expectedState = {
+      cartServerLastTotalsSyncDate: 12345678901
+    }
+    const wrapper = (mutations: any) => mutations[types.CART_SET_TOTALS_SYNC](
+      stateMock
+    )
+
+    Date.now = jest.fn(() => expectedState.cartServerLastTotalsSyncDate);
+
+    wrapper(cartMutations)
+
+    expect(stateMock).toEqual(expectedState)
+  })
+
   describe('CART_DEL_ITEM', () => {
     it('removes product from cart by sku', () => {
       const stateMock = {

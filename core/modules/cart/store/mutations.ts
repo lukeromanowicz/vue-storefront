@@ -28,10 +28,10 @@ const mutations: MutationTree<CartState> = {
     state.cartItemsHash = hash
   },
   [types.CART_SET_SYNC] (state) {
-    state.cartServerLastSyncDate = new Date().getTime()
+    state.cartServerLastSyncDate = Date.now()
   },
   [types.CART_SET_TOTALS_SYNC] (state) {
-    state.cartServerLastTotalsSyncDate = new Date().getTime()
+    state.cartServerLastTotalsSyncDate = Date.now()
   },
   [types.CART_DEL_ITEM] (state, { product, removeByParentSku = true }) {
     Vue.prototype.$bus.$emit('cart-before-delete', { items: state.cartItems })
